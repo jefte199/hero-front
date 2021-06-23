@@ -1,6 +1,11 @@
+import { Button } from 'antd';
+import 'antd/dist/antd.css';
+
 function App() {
   return (
-    <h1>BAtata</h1>
+    <Button type="primary" style={{ marginLeft: 0 }}>
+      BATATA Button
+    </Button>
   );
 }
 
