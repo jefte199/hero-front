@@ -1,5 +1,7 @@
+import React, { useState, useEffect } from 'react';
+
 //Layout
-import { Layout, Menu, Breadcrumb, Button } from 'antd';
+import { Layout, Menu, Button, Row, Col } from 'antd';
 
 import {
   DesktopOutlined,
@@ -8,44 +10,41 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useState } from 'react';
-
-//List
-import { List, Avatar, Space } from 'antd';
-
-import { MessageOutlined, LikeOutlined, StarOutlined } from '@ant-design/icons';
 
 //Card
-import { Card } from 'antd';
+import { Avatar, Card } from 'antd';
 
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+
+//Icons
+import { SmileTwoTone, HeartTwoTone, CheckCircleTwoTone } from '@ant-design/icons';
+
+import { createFromIconfontCN } from '@ant-design/icons';
+
+// Pagination 
+import { Pagination } from 'antd';
+
+// Dropdown
+import { Dropdown } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 
 //CSS
 import 'antd/dist/antd.css';
 
+import api from './api';
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: [
+    '//at.alicdn.com/t/font_1788044_0dwu4guekcwr.js', // icon-javascript, icon-java, icon-shoppingcart (overrided)
+    '//at.alicdn.com/t/font_1788592_a5xf2bdic3u.js', // icon-shoppingcart, icon-python
+  ],
+});
+
 const { Meta } = Card;
 
-const listData = [];
-for (let i = 0; i < 4; i++) {
-  listData.push({
-    href: 'https://ant.design',
-    title: `ant design part ${i}`,
-    avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Marvel_HQ_logo.svg/1200px-Marvel_HQ_logo.svg.png',
-    description:
-      'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-    content:
-      'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-  });
-}
-
-const IconText = ({ icon, text }) => (
-  <Space>
-    <Button type="primary" block>COMPRAR</Button>
-  </Space>
-);
-
-const ListHQ = (
+const CardHQ = (
   <Card
+    hoverable
     style={{ width: 300 }}
     cover={
       <img
@@ -55,9 +54,12 @@ const ListHQ = (
     }
     actions={[
       <Button type="primary" block>
-      Buy
-    </Button>,
-        ]}
+        <div className="icons-list">
+          Buy
+          <IconFont type="icon-shoppingcart" />
+        </div>
+      </Button>,
+    ]}
   >
     <Meta
       avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
@@ -73,21 +75,95 @@ const { SubMenu } = Menu;
 function App() {
 
   const [collapsed, setCollapsed] = useState(false);
+  const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    api.get("")
+      .then(res => {
+        console.log(res.data.data.results);
+        setCards(res.data.data.results);
+      })
+  }, []);
+
+  const clickOnPagination = (number) => {
+    console.log(number);
+  }
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout className="site-layout">
         <Header className="site-layout-background" style={{ padding: 0 }} />
         <Content style={{ margin: '0 16px' }}>
-          <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
-          <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-            {ListHQ}
-          </div>
+          <Row
+            gutter={[12, 8]}
+            justify="center"
+            align="middle"
+          >
+            {cards.map(item => {
+              const menu = (
+                <Menu>
+                  <Menu.Item>
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+                      {item.description}
+                    </a>
+                  </Menu.Item>
+                </Menu>
+              );
+              
+              return (
+                <Col
+                  span={6}
+                >
+                  <Card
+                    hoverable
+                    style={{ maxWidth: "200px" }}
+                    cover={
+                      <img
+                        alt="example"
+                        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                      />
+                    }
+                    actions={[
+                      <Button type="primary" block>
+                        <div className="icons-list">
+                          Buy
+                          <IconFont type="icon-shoppingcart" />
+                        </div>
+                      </Button>,
+                    ]}
+                  >
+                    <Meta
+                      avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                      title={item.name}
+                    />,
+                    <Dropdown overlay={menu}>
+                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                        Hover me <DownOutlined />
+                      </a>
+                    </Dropdown>,
+                  </Card>
+                </Col>
+              )
+            })}
+          </Row>
+          <Row
+            gutter={[8, 8]}
+            justify="center"
+            align="middle"
+            style={{
+              marginTop: "10px"
+            }}
+          >
+            <Col>
+              <Pagination
+                defaultCurrent={1}
+                total={20}
+                onChange={clickOnPagination}
+              />
+            </Col>
+          </Row>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Front HQ ©2021</Footer>
+        <Footer style={{ textAlign: 'center' }}>Front Hero ©2021</Footer>
       </Layout>
     </Layout>
   );
