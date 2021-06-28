@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, Button, Avatar, } from "antd";
 import { createFromIconfontCN } from "@ant-design/icons"
+import { useItems } from "../../hooks/items"
 
 const IconFont = createFromIconfontCN({
   scriptUrl: [
@@ -12,6 +13,9 @@ const IconFont = createFromIconfontCN({
 const { Meta } = Card;
 
 export default function Cartao(props) {
+
+  const { items, setItems } = useItems();
+
   return (
     <>
       <Card
@@ -21,10 +25,12 @@ export default function Cartao(props) {
           <img
             alt={props.title}
             src={props.urlImg}
+            width="200px"
+            height="300px"
           />
         }
         actions={[
-          <Button type="primary" block>
+          <Button type="primary" block onClick={() => setItems([...items, props.title])}>
             <div className="icons-list">
               Buy
               <IconFont type="icon-shoppingcart" />

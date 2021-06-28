@@ -4,16 +4,19 @@ import 'antd/dist/antd.css';
 
 import Header from "./components/Header"
 import Home from "./pages/Home";
+import ItemsProvider from './hooks/items';
 
 const { Footer } = Layout;
 
 function App() {
   return (
-    <Layout className="layout">
-      <Header />
-      <Home />
-      <Footer style={{ textAlign: 'center' }}>Created by Jefté ©2021</Footer>
-    </Layout>
+    <ItemsProvider>
+      <Layout className="layout">
+        <Header />
+        <Home />
+        <Footer style={{ textAlign: 'center' }}>Created by Jefté ©2021</Footer>
+      </Layout>
+    </ItemsProvider>
   );
 }
 

@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import { Layout, Row, Col, Pagination } from "antd"
+import axios from "axios";
+import md5 from "js-md5"
 
-import api from "../../service"
+import api, { publick_key, private_key } from "../../service"
 import CardHQ from "../../components/Card";
 
 const { Content } = Layout;
+const timestamp = Number(new Date());
+const hash_hero = md5.create();
+hash_hero.update(timestamp + private_key + publick_key);
+const hash = hash_hero.hex();
 
 export default function Home() {
+
 
   const [cards, setCards] = useState([]);
   const [buy, setBuy] = useState(0);
   const [compras, setCompras] = useState([]);
+  const [totalItems, setTotalItems] = useState([]);
 
   function Buy_HQ(new_compras) {
     const arr = [...compras];
@@ -19,9 +27,26 @@ export default function Home() {
     setCompras(arr);
   }
 
-  const clickOnPagination = (page) => {
-    console.log(page);
+  const getUrlPagination = (limit, offset) => {
+    const url = `https://gateway.marvel.com/v1/public/comics?offset=${offset}&limit=${limit}&ts=${timestamp}&apikey=${publick_key}&hash=${hash}`
+    console.log(url);
+
+    return url;
   }
+
+  const clickOnPagination = (page) => {
+    api.get(getUrlPagination(`${page}0`, `${page - 1}0`))
+      .then(res => {
+        const arr = [...res.data.data.results.slice(cards.length)];
+        setCards(arr)
+      })
+
+  }
+
+  useEffect(() => {
+    api.get("")
+      .then(res => setTotalItems(res.data.data.total))
+  }, []);
 
   useEffect(() => {
     api.get("")
@@ -66,7 +91,7 @@ export default function Home() {
         <Col>
           <Pagination
             defaultCurrent={1}
-            total={20}
+            total={totalItems}
             onChange={clickOnPagination}
           />
         </Col>

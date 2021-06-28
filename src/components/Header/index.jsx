@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Layout, Menu, } from "antd";
 import { UserOutlined, createFromIconfontCN } from "@ant-design/icons";
+import { useItems } from "../../hooks/items";
 
 const { Header } = Layout;
 const { Item, SubMenu } = Menu;
@@ -14,7 +15,7 @@ const IconFont = createFromIconfontCN({
 
 export default function Index() {
 
-  const [compras, setCompras] = useState([]);
+  const { items } = useItems();
 
   return (
     <>
@@ -30,7 +31,7 @@ export default function Index() {
             icon={<UserOutlined />}
             title={"buying"}
           >
-            {!!compras.length && compras.map((item, index) => {
+            {!!items.length && items.map((item, index) => {
               const key = index + 1;
               return (
                 <Item key={key}>
